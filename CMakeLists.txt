@@ -14,19 +14,6 @@ option (optBUILD_STDCALL "Build using stdcall"      OFF)
 option (optBUILD_LITE	 "Build without text disassembly"      OFF)
 option (USE_CLANG "build application with clang" OFF)
 
-if (optHAS_OPTIMIZED)
-  if (optHAS_SYMBOLS)
-    set (CMAKE_BUILD_TYPE RelWithDebInfo)
-  else (optHAS_SYMBOLS)
-    set (CMAKE_BUILD_TYPE Release)
-  endif (optHAS_SYMBOLS)
-else (optHAS_OPTIMIZED)
-  if (optHAS_SYMBOLS)
-    set (CMAKE_BUILD_TYPE Debug)
-  else (optHAS_SYMBOLS)
-    set (CMAKE_BUILD_TYPE Debug)
-  endif (optHAS_SYMBOLS)
-endif (optHAS_OPTIMIZED)
 
 # determine BEA_COMPILER
 if (NOT BEA_COMPILER)
@@ -146,7 +133,7 @@ if (BEA_COMPILER STREQUAL msvc)
   #generate PDB for Debug/RelWithDebInfo builds
   if (optHAS_SYMBOLS)
     if (optBUILD_DLL)
-      set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /DEBUG /OPT:REF,ICF")
+      set (BEA_SHARED_LINKER_FLAGS "${BEA_SHARED_LINKER_FLAGS} /DEBUG /OPT:REF,ICF")
     endif ()
   endif ()
 
@@ -244,10 +231,7 @@ if (BEA_COMPILER STREQUAL watcom)
   if (optBUILD_LITE)
     set (BEA_DEFINITIONS "${BEA_DEFINITIONS} -DBEA_LIGHT_DISASSEMBLY")
   endif ()
-  set (CMAKE_EXE_LINKER_FLAGS "-l=nt")
-  set (CMAKE_SHARED_LINKER_FLAGS "-l=nt")
-
-
+  set (BEA_SHARED_LINKER_FLAGS "-l=nt")
 endif ()
 
 # =========================================
@@ -306,30 +290,8 @@ endforeach ()
 # pass compiler flags to cmake
 # ================================================
 
-if (${CMAKE_BUILD_TYPE} STREQUAL RelWithDebInfo)
-  set (CMAKE_C_FLAGS_RELWITHDEBINFO   ${myC_FLAGS})
-  set (CMAKE_CXX_FLAGS_RELWITHDEBINFO ${myCXX_FLAGS})
-endif ()
-
-if (${CMAKE_BUILD_TYPE} STREQUAL Release)
-  set (CMAKE_C_FLAGS_RELEASE   ${myC_FLAGS})
-  set (CMAKE_CXX_FLAGS_RELEASE ${myCXX_FLAGS})
-endif ()
-
-if (${CMAKE_BUILD_TYPE} STREQUAL DebugFull)
-  set (CMAKE_C_FLAGS_DEBUGFULL   ${myC_FLAGS})
-  set (CMAKE_CXX_FLAGS_DEBUGFULL ${myCXX_FLAGS})
-endif ()
-
-if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
-  set (CMAKE_C_FLAGS_DEBUG   ${myC_FLAGS})
-  set (CMAKE_CXX_FLAGS_DEBUG ${myCXX_FLAGS})
-endif ()
-
 set (BEA_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/include)
 set (BEA_SRC_ROOT ${CMAKE_SOURCE_DIR}/src)
-
-
 
 # ======================================
 # set output dirs
@@ -351,22 +313,11 @@ set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${myLIB_OUTPUT})
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${myBIN_OUTPUT})
 
 
-
-FIND_PACKAGE (ZLIB)
-
-
 set (build_modules
   src
   #examples
   #unittest
 )
-
-
-add_definitions     (${BEA_DEFINITIONS})
-include_directories (${BEA_SRC_ROOT}  ${BEA_INCLUDE_PATH}
-                     ${CMAKE_SOURCE_DIR} ${ZLIB_INCLUDE_DIR})
-link_directories    (${BEA_LIBS_PATH})
-
 
 
 foreach (mdl ${build_modules})

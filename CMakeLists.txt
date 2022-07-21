@@ -1,9 +1,10 @@
 project (BeaEngine)
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 3.8)
 
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
 set (CMAKE_VERBOSE_MAKEFILE ON)
+
+include(GenerateExportHeader)
 
 option (optHAS_OPTIMIZED "Turn Optimizations ON"    OFF)
 option (optHAS_SYMBOLS   "Build with debug Symbols" ON)
@@ -74,9 +75,7 @@ endif ()
 if (BEA_COMPILER STREQUAL clang)
   set (CMAKE_C_COMPILER   clang)
   set (CMAKE_CXX_COMPILER clang++)
-  set (BEA_WARNINGS -Wall -W -Wextra -Wconversion -Wno-long-long
-    -Wshadow  -Wpointer-arith -Wcast-qual  -Wcast-align -Wwrite-strings)
-  #list (APPEND BEA_FLAGS -fsanitize=fuzzer-no-link)
+  set (BEA_WARNINGS -Wall -W -Wextra -Wconversion -Wno-long-long  -Wshadow  -Wpointer-arith -Wcast-qual  -Wcast-align -Wwrite-strings)
 endif ()
 # =========================================
 # gcc configuration
@@ -84,8 +83,7 @@ endif ()
 if (BEA_COMPILER STREQUAL gnu)
   set (CMAKE_C_COMPILER   gcc)
   set (CMAKE_CXX_COMPILER g++)
-  set (BEA_WARNINGS -Wall -W -Wextra -Wconversion -Wno-long-long
-    -Wshadow  -Wpointer-arith -Wcast-qual  -Wcast-align -Wwrite-strings)
+  set (BEA_WARNINGS -Wall -W -Wextra -Wconversion -Wno-long-long  -Wshadow  -Wpointer-arith -Wcast-qual  -Wcast-align -Wwrite-strings)
   set (BEA_FLAGS    -pedantic -ansi -pipe -fno-common -fshort-enums )
   set (BEA_DEFINITIONS "")
   if (optHAS_SYMBOLS)
@@ -363,40 +361,11 @@ set (build_modules
   #unittest
 )
 
-if (NOT ZLIB_FOUND)
-  set (ZLIB_INCLUDE_DIR unittest/thirdparty/zlib)
-else ()
-  list (APPEND BEA_LIBS_PATH ${ZLIB_LIBRARIES})
-endif ()
-
 
 add_definitions     (${BEA_DEFINITIONS})
 include_directories (${BEA_SRC_ROOT}  ${BEA_INCLUDE_PATH}
                      ${CMAKE_SOURCE_DIR} ${ZLIB_INCLUDE_DIR})
 link_directories    (${BEA_LIBS_PATH})
-
-
-set (BEA_TARGET "BeaEngine")
-
-if (NOT optBUILD_DLL)
-  set (BEA_TARGET "${BEA_TARGET}_s")
-endif ()
-
-if (NOT optHAS_OPTIMIZED)
-  set (BEA_TARGET "${BEA_TARGET}_d")
-endif ()
-
-if (NOT optBUILD_LITE)
-  set (BEA_TARGET "${BEA_TARGET}_l")
-endif ()
-
-if (optBUILD_STDCALL)
-  set (BEA_TARGET "${BEA_TARGET}_stdcall")
-endif ()
-
-if (optBUILD_64BIT)
-  set (BEA_TARGET "${BEA_TARGET}_64")
-endif ()
 
 
 

@@ -6,19 +6,10 @@ namespace BeaEngine {
 
 
 #include <beaengine/macros.h>
-#include <beaengine/export.h>
+#include <beaengine/bea_api.h>
 #include <beaengine/basic_types.h>
 
-#if !defined(BEA_ENGINE_STATIC)
-	#if defined(BUILD_BEA_ENGINE_DLL)
-		#define BEA_API bea__api_export__
-	#else
-		#define BEA_API bea__api_import__
-	#endif
-#else
-	#define BEA_API
-#endif
-
+#define BEA_API BEAENGINE_EXPORT
 
 #define INSTRUCT_LENGTH 80
 

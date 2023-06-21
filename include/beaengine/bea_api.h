@@ -39,6 +39,7 @@
 #pragma warning( disable: 4251 )
 #endif
 
+#include <beaengine/export.h>
 /* Some compilers use a special export keyword */
 #ifndef bea__api_export__
 # if defined(__BEOS__)

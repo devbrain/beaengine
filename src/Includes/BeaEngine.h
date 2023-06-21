@@ -6,7 +6,7 @@ namespace BeaEngine {
 
 
 #include <beaengine/macros.h>
-#include <beaengine/export.h>
+#include <beaengine/bea_api.h>
 #include <beaengine/basic_types.h>
 
 #if !defined(BEA_ENGINE_STATIC)

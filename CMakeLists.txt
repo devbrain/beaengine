@@ -1,10 +1,9 @@
-project (BeaEngine)
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.24)
+project (BeaEngine VERSION 5.3.0)
+
 
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 set (CMAKE_VERBOSE_MAKEFILE ON)
-
-include(GenerateExportHeader)
 
 option (optHAS_OPTIMIZED "Turn Optimizations ON"    OFF)
 option (optHAS_SYMBOLS   "Build with debug Symbols" ON)
@@ -271,57 +270,32 @@ set (myC_FLAGS "")
 set (myCXX_FLAGS "")
 
 foreach (flag ${BEA_FLAGS})
-  set (myC_FLAGS "${myC_FLAGS} ${flag}")
+  set (myC_FLAGS ${myC_FLAGS} ${flag})
 endforeach ()
 
 foreach (flag ${BEA_WARNINGS})
-  set (myC_FLAGS "${myC_FLAGS} ${flag}")
+  set (myC_FLAGS ${myC_FLAGS} ${flag})
 endforeach ()
 
 foreach (flag ${BEA_FLAGS})
-  set (myCXX_FLAGS "${myCXX_FLAGS} ${flag}")
+  set (myCXX_FLAGS ${myCXX_FLAGS} ${flag})
 endforeach ()
 
 foreach (flag ${BEA_WARNINGS})
-  set (myCXX_FLAGS "${myCXX_FLAGS} ${flag}")
+  set (myCXX_FLAGS ${myCXX_FLAGS} ${flag})
 endforeach ()
 
-# ================================================
-# pass compiler flags to cmake
-# ================================================
-
-set (BEA_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/include)
-set (BEA_SRC_ROOT ${CMAKE_SOURCE_DIR}/src)
 
 # ======================================
 # set output dirs
 # ======================================
+set(PROJECT_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
+set(PROJECT_INCLUDE_PRIVATE ${PROJECT_ROOT}/src)
+set(PROJECT_INCLUDE ${PROJECT_ROOT}/include)
+set(PROJECT_CONFIG_INCLUDE ${CMAKE_CURRENT_BINARY_DIR}/include)
 
-set (myQualification "${CMAKE_SYSTEM_NAME}.${BEA_COMPILER}.${CMAKE_BUILD_TYPE}")
-set (myLIB_OUTPUT "${CMAKE_BINARY_DIR}/lib/${myQualification}" )
-set (myBIN_OUTPUT "${CMAKE_BINARY_DIR}/bin/${myQualification}")
-set (myOBJ_OUTPUT obj)
+add_subdirectory(src)
 
-if (optBUILD_64BIT)
-  set (myLIB_OUTPUT "${myLIB_OUTPUT}.64" )
-  set (myBIN_OUTPUT "${myBIN_OUTPUT}.64")
-  set (myOBJ_OUTPUT "${myOBJ_OUTPUT}.64")
+if (BeaEngine_INCLUDE_PACKAGING)
+    add_subdirectory(packaging)
 endif ()
-
-set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${myLIB_OUTPUT})
-set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${myLIB_OUTPUT})
-set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${myBIN_OUTPUT})
-
-
-set (build_modules
-  src
-  #examples
-  #unittest
-)
-
-
-foreach (mdl ${build_modules})
-  set (MDL_SRC "${mdl}")
-  set (MDL_OBJ "${myOBJ_OUTPUT}/${myQualification}/${mdl}")
-  add_subdirectory (${MDL_SRC} ${MDL_OBJ})
-endforeach ()
